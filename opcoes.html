@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opções - Amorix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --light-color: #f5f6fa;
+            --danger-color: #e74c3c;
+            --success-color: #00b894;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-item {
+            padding: 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #eee;
+        }
+
+        .option-danger {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .option-danger:hover {
+            background-color: #fff8f8;
+            transform: translateY(-2px);
+        }
+
+        .option-primary {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .option-primary:hover {
+            background-color: #f8f9fb;
+            transform: translateY(-2px);
+        }
+
+        .option-success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .option-success:hover {
+            background-color: #f0fff9;
+            transform: translateY(-2px);
+        }
+
+        .option-icon {
+            font-size: 24px;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .icon-danger {
+            color: var(--danger-color);
+        }
+
+        .icon-primary {
+            color: var(--primary-color);
+        }
+
+        .icon-success {
+            color: var(--success-color);
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none;
+            z-index: 1000;
+        }
+
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .option-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="back-btn" onclick="voltarParaCarteira()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Opções da Carteira</h1>
+            <div style="width: 30px;"></div>
+        </header>
+        
+        <p class="subtitle">Selecione uma opção para gerenciar sua carteira</p>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <span>Processando...</span>
+        </div>
+
+        <div class="option-list">
+            <div class="option-item option-success" onclick="irParaMinerar()">
+                <div class="option-icon icon-success">
+                    <i class="fas fa-hammer"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Minerar Amoracoins</div>
+                    <div class="option-description">Obtenha Amoracoins participando da mineração</div>
+                </div>
+            </div>
+
+            <div class="option-item option-success" onclick="irParaTransferencia()">
+                <div class="option-icon icon-success">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Transferir Amoracoins</div>
+                    <div class="option-description">Envie Amoracoins para outra carteira</div>
+                </div>
+            </div>
+
+            <div class="option-item option-primary" onclick="copiarChave()">
+                <div class="option-icon icon-primary">
+                    <i class="fas fa-copy"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Copiar Chave Privada</div>
+                    <div class="option-description">Copie sua chave privada para guardar em um local seguro</div>
+                </div>
+            </div>
+
+            <div class="option-item option-primary" onclick="copiarEndereco()">
+                <div class="option-icon icon-primary">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Copiar Endereço</div>
+                    <div class="option-description">Copie o endereço da sua carteira para receber Amoracoins</div>
+                </div>
+            </div>
+<div class="option-item option-primary" onclick="irParaSobre()">
+    <div class="option-icon icon-primary">
+        <i class="fas fa-info-circle"></i>
+    </div>
+    <div class="option-content">
+        <div class="option-title">Sobre</div>
+        <div class="option-description">Saiba mais sobre o Amorix</div>
+    </div>
+</div>
+            <div class="option-item option-danger" onclick="sairCarteira()">
+                <div class="option-icon icon-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Sair da Carteira</div>
+                    <div class="option-description">Sair da sua conta (seus dados permanecem seguros)</div>
+                </div>
+            </div>
+
+            <div class="option-item option-danger" onclick="excluirCarteira()">
+                <div class="option-icon icon-danger">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Excluir Carteira</div>
+                    <div class="option-description">Atenção: Esta ação não pode ser desfeita!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let endereco = "";
+        let chavePrivada = "";
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function voltarParaCarteira() {
+            window.location.href = 'index.html';
+        }
+
+        function irParaMinerar() {
+            window.location.href = 'minerar.html';
+        }
+
+        function irParaTransferencia() {
+            window.location.href = 'transferir.html';
+        }
+
+        function copiarChave() {
+            navigator.clipboard.writeText(chavePrivada)
+                .then(() => {
+                    showNotification('Chave privada copiada com sucesso!');
+                })
+                .catch(err => {
+                    showNotification('Erro ao copiar a chave privada.');
+                    console.error('Erro ao copiar:', err);
+                });
+        }
+
+        function copiarEndereco() {
+            navigator.clipboard.writeText(endereco)
+                .then(() => {
+                    showNotification('Endereço copiado com sucesso!');
+                })
+                .catch(err => {
+                    showNotification('Erro ao copiar o endereço.');
+                    console.error('Erro ao copiar:', err);
+                });
+        }
+
+        function sairCarteira() {
+            localStorage.removeItem('amoracoin_private_key');
+            window.location.href = 'index.html';
+            showNotification('Você saiu da sua conta.');
+        }
+
+        function excluirCarteira() {
+            if (!confirm('Tem certeza que deseja excluir sua carteira? Esta ação não pode ser desfeita.')) {
+                return;        
+            }
+            
+            const chavePrivada = localStorage.getItem('amoracoin_private_key');
+            
+            if (!chavePrivada) {
+                showNotification('Erro: Chave privada não encontrada.');
+                return;
+            }
+            
+            showLoading();
+            
+            fetch(`https://amoracoin-serve.vercel.app/Wallet?delete_wallet=${chavePrivada}`)
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    window.location.href = 'index.html';
+                    localStorage.removeItem('amoracoin_private_key');
+                    showNotification('Carteira excluída com sucesso!');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                })
+                .catch(error => {
+                    hideLoading();
+                    showNotification('Erro ao excluir a carteira.');
+                    console.error('Erro:', error);
+                });
+        }
+
+        window.onload = function() {          
+            endereco = sessionStorage.getItem('carteira_endereco');
+            chavePrivada = sessionStorage.getItem('carteira_chave');
+                       
+            if (!endereco || !chavePrivada) {              
+                const privateKey = localStorage.getItem('amoracoin_private_key');
+                
+                if (privateKey) {                   
+                    fetch(`https://amoracoin-serve.vercel.app/Wallet?key_private=${privateKey}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message && data.message === "Account not found") {
+                                showNotification('Conta não encontrada.');
+                                window.location.href = 'index.html';
+                            } else {
+                                endereco = data.address;
+                                chavePrivada = data.key_private;
+                            }
+                        })
+                        .catch(error => {
+                            showNotification('Erro ao recuperar dados da carteira.');
+                            console.error('Erro:', error);
+                            window.location.href = 'index.html';
+                        });
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+        };
+        
+        function irParaSobre() {
+    window.location.href = 'sobre.html';
+}
+    </script>
+</body>
+</html>
+
+
+

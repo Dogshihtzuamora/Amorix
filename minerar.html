@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minerar - Amorix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --light-color: #f5f6fa;
+            --danger-color: #e74c3c;
+            --success-color: #00b894;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .mining-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .balance-display {
+            background-color: var(--light-color);
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            width: 100%;
+        }
+
+        .balance-title {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        .balance-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+
+        .mining-button {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mining-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .mining-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log-container {
+            background-color: #f1f1f1;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            width: 100%;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .success-log {
+            color: var(--success-color);
+        }
+
+        .error-log {
+            color: var(--danger-color);
+        }
+
+        .info-log {
+            color: var(--primary-color);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--success-color);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none;
+            z-index: 1000;
+        }
+
+        .chart-container {
+            width: 100%;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .balance-value {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+
+            .tab {
+                border-bottom: 1px solid #ddd;
+                text-align: center;
+            }
+
+            .tab.active {
+                border-bottom: 1px solid var(--primary-color);
+                background-color: #f1f1f1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="back-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Minerar Amoracoins</h1>
+            <div style="width: 30px;"></div>
+        </header>
+        
+        <p class="subtitle">Minere Amoracoins e aumente seu saldo</p>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('mining')">Mineração</div>
+            <div class="tab" onclick="switchTab('chart')">Gráfico</div>
+        </div>
+
+        <div class="tab-content active" id="mining-tab">
+            <div class="mining-container">
+                <div class="balance-display">
+                    <div class="balance-title">Seu Saldo Atual</div>
+                    <div class="balance-value" id="balanceValue">--</div>
+                    <div class="balance-title">Amoracoins</div>
+                </div>
+
+                <button class="mining-button" id="miningButton" onclick="iniciarMineracao()">
+                    <i class="fas fa-hammer"></i>
+                    Minerar Amoracoins
+                </button>
+
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry info-log">Sistema de mineração iniciado. Pronto para começar.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="chart-tab">
+            <div class="chart-container">
+                <canvas id="balanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let privateKey = "";
+        let saldo = 0;
+        let balanceChart;
+        let balanceHistory = [];
+        let timeLabels = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelector(`.tab:nth-child(${tabName === 'mining' ? 1 : 2})`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            if (tabName === 'chart' && balanceHistory.length > 0) {
+                updateChart();
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('balanceChart').getContext('2d');
+            
+            balanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'Saldo de Amoracoins',
+                        data: balanceHistory,
+                        backgroundColor: 'rgba(108, 92, 231, 0.2)',
+                        borderColor: 'rgba(108, 92, 231, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgba(108, 92, 231, 1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Amoracoins'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tempo'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Saldo: ${context.parsed.y} Amoracoins`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Evolução do Saldo',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 6,
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            if (balanceChart) {
+                balanceChart.data.labels = timeLabels;
+                balanceChart.data.datasets[0].data = balanceHistory;
+                balanceChart.update();
+            }
+        }
+
+        function addBalanceDataPoint(balance) {
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString();
+            
+            balanceHistory.push(balance);
+            timeLabels.push(timeLabel);
+            
+            
+            if (balanceHistory.length > 50) {
+                balanceHistory.shift();
+                timeLabels.shift();
+            }
+            
+            if (balanceChart) {
+                updateChart();
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}-log`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function voltarParaOpcoes() {
+            window.location.href = 'opcoes.html';
+        }
+
+        function atualizarSaldo(novoSaldo) {
+            saldo = novoSaldo;
+            document.getElementById('balanceValue').textContent = saldo;
+            addBalanceDataPoint(saldo);
+        }
+
+        function gerarSeed() {
+            const timestamp = Date.now();
+            const aleatorio = Math.random();
+            const baseSeed = Math.floor((timestamp * aleatorio * 1000) % 10000);
+            return baseSeed;
+        }
+
+        async function iniciarMineracao() {
+            const miningButton = document.getElementById('miningButton');
+            miningButton.disabled = true;
+            miningButton.innerHTML = '<div class="loading-spinner"></div> Minerando...';
+            
+            addLog("Iniciando processo de mineração...");
+            
+            try {
+                const numMineracoes = 30; 
+                for (let i = 0; i < numMineracoes; i++) {
+                    addLog(`Tentando mineração número ${i + 1}...`, 'info');
+                    
+                    const seed = gerarSeed();
+                    addLog(`Seed gerada: ${seed}`, 'info');
+                    
+                    const url = `https://amoracoin-serve.vercel.app/mine?private_key=${privateKey}&seed=${seed}`;
+                    addLog(`Conectando ao servidor de mineração...`, 'info');
+                    
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erro na resposta do servidor: ${response.status}`);
+                    }
+                    
+                    const responseData = await response.json();
+                    addLog(`Resposta do servidor recebida.`, 'info');
+                    
+                    if (responseData.success) {
+                        addLog(`Mineração bem-sucedida! Novo saldo: ${responseData.newBalance} Amoracoins`, 'success');
+                        atualizarSaldo(responseData.newBalance);
+                        showNotification('Mineração bem-sucedida!');
+                    } else {
+                        let erroMensagem = responseData.message || 'Falhou a mineração';
+                        addLog(`Falha na mineração: ${erroMensagem}`, 'error');
+                        showNotification(`Falha na mineração: ${erroMensagem}`);
+                    }
+                    
+         
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+            } catch (error) {
+                addLog(`Erro: ${error.message}`, 'error');
+                showNotification('Erro ao realizar a mineração.');
+                console.error('Erro:', error);
+            } finally {
+                miningButton.disabled = false;
+                miningButton.innerHTML = '<i class="fas fa-hammer"></i> Minerar Amoracoins';
+            }
+        }
+
+        window.onload = function() {
+            initChart();
+            
+            const storedPrivateKey = localStorage.getItem('amoracoin_private_key');
+            
+            if (!storedPrivateKey) {
+                addLog("Erro: Chave privada não encontrada. Redirecionando...", 'error');
+                showNotification('Erro: Chave privada não encontrada.');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+            
+            privateKey = storedPrivateKey;            
+            fetch(`https://amoracoin-serve.vercel.app/Wallet?key_private=${privateKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message && data.message === "Account not found") {
+                        addLog("Erro: Conta não encontrada.", 'error');
+                        showNotification('Conta não encontrada.');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    } else {
+                        const currentBalance = data.balance || 0;
+                        atualizarSaldo(currentBalance);
+                        addLog(`Saldo inicial: ${currentBalance} Amoracoins`, 'info');
+                    }
+                })
+                .catch(error => {
+                    addLog(`Erro ao recuperar dados da carteira: ${error.message}`, 'error');
+                    showNotification('Erro ao recuperar dados da carteira.');
+                    console.error('Erro:', error);
+                });
+        };
+    </script>
+</body>
+</html>
