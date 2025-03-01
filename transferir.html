@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transferir Amoracoins</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --light-color: #f5f6fa;
+            --danger-color: #e74c3c;
+            --success-color: #00b894;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .back-btn {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            display: none;
+            padding: 15px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            color: white;
+            font-weight: bold;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success {
+            background-color: var(--success-color);
+        }
+
+        .error {
+            background-color: var(--danger-color);
+        }
+
+        .transacao-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            background-color: #f8f9fb;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .transacao-enviada {
+            border-left-color: var(--danger-color);
+        }
+
+        .transacao-recebida {
+            border-left-color: var(--success-color);
+        }
+
+        .transacao-item p {
+            margin-bottom: 5px;
+        }
+
+        .transacao-item .endereco {
+            font-size: 0.85rem;
+            word-break: break-all;
+            color: #636e72;
+        }
+
+        .transacao-item .quantia {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .transacao-item .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .status-enviado {
+            background-color: var(--danger-color);
+        }
+
+        .status-recebido {
+            background-color: var(--success-color);
+        }
+
+        .sem-transacoes {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            background-color: #f8f9fb;
+            border-radius: var(--border-radius);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="back-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Transferir Amoracoins</h1>
+            <div style="width: 30px;"></div>
+        </header>
+        
+        <p class="subtitle">Envie Amoracoins para outra carteira de forma rápida e segura</p>
+
+        <div class="notification" id="notification"></div>
+
+        <div class="form-group">
+            <label for="destino"><i class="fas fa-wallet"></i> Endereço de Destino</label>
+            <input type="text" id="destino" placeholder="Cole o endereço da carteira de destino">
+        </div>
+
+        <div class="form-group">
+            <label for="quantidade"><i class="fas fa-coins"></i> Quantidade de Amoracoins</label>
+            <input type="number" id="quantidade" placeholder="Digite a quantidade a transferir" min="0.01" step="0.01">
+        </div>
+
+        <button class="btn" onclick="transferirAmoracoin()">
+            <i class="fas fa-paper-plane"></i> Transferir Amoracoins
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <span>Processando sua transferência...</span>
+        </div>
+
+        <h2><i class="fas fa-history"></i> Histórico de Transações</h2>
+        <div id="transacoes"></div>
+    </div>
+
+    <script>
+        let enderecoUsuario = '';
+
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification';
+            
+            if (isError) {
+                notification.classList.add('error');
+            } else {
+                notification.classList.add('success');
+            }
+            
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function voltarParaOpcoes() {
+            window.location.href = 'opcoes.html';
+        }
+
+        function obterEnderecoUsuario() {
+            const chavePrivada = localStorage.getItem('amoracoin_private_key');
+            if (!chavePrivada) {
+                showNotification('Erro: Chave privada não encontrada. Faça login novamente.', true);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+
+            showLoading();
+            fetch(`https://amoracoin-serve.vercel.app/Wallet?key_private=${chavePrivada}`)
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                enderecoUsuario = data.address;
+                carregarTransacoes();
+            })
+            .catch(error => {
+                hideLoading();
+                showNotification('Erro ao obter dados da carteira.', true);
+                console.error('Erro ao obter endereço:', error);
+            });
+        }
+
+        function transferirAmoracoin() {
+            const destino = document.getElementById('destino').value.trim();
+            const quantidade = document.getElementById('quantidade').value.trim();
+            const chavePrivada = localStorage.getItem('amoracoin_private_key');
+
+            if (!chavePrivada) {
+                showNotification('Erro: Chave privada não encontrada.', true);
+                return;
+            }
+
+            if (!destino) {
+                showNotification('Por favor, insira o endereço de destino.', true);
+                return;
+            }
+
+            if (!quantidade || parseFloat(quantidade) <= 0) {
+                showNotification('Por favor, insira uma quantidade válida.', true);
+                return;
+            }
+
+            showLoading();
+
+            const url = `https://amoracoin-serve.vercel.app/transfer?private_key=${chavePrivada}&destination_address=${destino}&amount=${quantidade}`;
+
+            fetch(url, { method: 'GET' })  
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.success === true) {
+                    showNotification('Transferência concluída com sucesso!');
+                    document.getElementById('destino').value = '';
+                    document.getElementById('quantidade').value = '';
+                    setTimeout(() => {
+                        carregarTransacoes();
+                    }, 1000);
+                } else {
+                    showNotification(data.message || 'Erro na transferência.', true);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showNotification('Erro ao processar a transferência.', true);
+                console.error('Erro:', error);
+            });
+        }
+
+        function formatarEndereco(endereco) {
+            if (endereco.length <= 16) return endereco;
+            return endereco.substring(0, 8) + '...' + endereco.substring(endereco.length - 8);
+        }
+
+        function carregarTransacoes() {
+            if (!enderecoUsuario) return;
+
+            showLoading();
+            fetch('https://amoracoin-serve.vercel.app/transfer', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                const transacoesUsuario = data.filter(transacao =>
+                    transacao.from === enderecoUsuario || transacao.to === enderecoUsuario
+                );
+
+                const transacoesDiv = document.getElementById('transacoes');
+                transacoesDiv.innerHTML = '';
+
+                if (transacoesUsuario.length === 0) {
+                    transacoesDiv.innerHTML = '<div class="sem-transacoes"><i class="fas fa-info-circle"></i> Você ainda não possui transações.</div>';
+                    return;
+                }
+                
+                transacoesUsuario.sort((a, b) => {
+                    
+                    if (a.timestamp && b.timestamp) {
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                    }
+                    return 0;
+                });
+
+                transacoesUsuario.forEach(transacao => {
+                    const item = document.createElement('div');
+                    item.classList.add('transacao-item');
+                    
+                    let tipoTransacao, classeStatus, classeItem;
+                    
+                    if (transacao.from === enderecoUsuario) {
+                        tipoTransacao = 'Enviado';
+                        classeStatus = 'status-enviado';
+                        classeItem = 'transacao-enviada';
+                    } else {
+                        tipoTransacao = 'Recebido';
+                        classeStatus = 'status-recebido';
+                        classeItem = 'transacao-recebida';
+                    }
+                    
+                    item.classList.add(classeItem);
+
+                    item.innerHTML = `
+                        <div class="quantia">${transacao.amount} <small>AMC</small></div>
+                        <p><strong>De:</strong> <span class="endereco">${formatarEndereco(transacao.from)}</span></p>
+                        <p><strong>Para:</strong> <span class="endereco">${formatarEndereco(transacao.to)}</span></p>
+                        <span class="status ${classeStatus}">
+                            <i class="fas fa-${tipoTransacao === 'Enviado' ? 'arrow-up' : 'arrow-down'}"></i> 
+                            ${tipoTransacao}
+                        </span>
+                    `;
+                    
+                    transacoesDiv.appendChild(item);
+                });
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Erro ao carregar transações:', error);
+                document.getElementById('transacoes').innerHTML = 
+                    '<div class="sem-transacoes"><i class="fas fa-exclamation-triangle"></i> Erro ao carregar transações.</div>';
+            });
+        }
+
+               document.addEventListener('DOMContentLoaded', function() {
+            obterEnderecoUsuario();
+        });
+    </script>
+</body>
+</html>
