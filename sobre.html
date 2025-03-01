@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre - Amorix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --light-color: #f5f6fa;
+            --danger-color: #e74c3c;
+            --success-color: #00b894;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .about-content {
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 8px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            color: var(--primary-color);
+            font-size: 22px;
+            min-width: 30px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .about-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="back-btn" onclick="voltarParaOpcoes()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Sobre o Amorix</h1>
+            <div style="width: 30px;"></div>
+        </header>
+
+        <div class="about-content">
+            <h2 class="section-title">O que é o Amorix?</h2>
+            <p>O Amorix é um banco digital open source para Amoracoin com uma interface bonita e intuitiva. Todas as transações são enviadas diretamente para a rede Amoracoin.</p>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <div class="feature-text">
+                    <strong>Open Source</strong> - Código aberto e transparente para todos.
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="feature-text">
+                    <strong>Rede Amoracoin</strong> - Conectado diretamente à rede Amoracoin.
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <div class="feature-text">
+                    <strong>Interface Bonita</strong> - Design moderno e fácil de usar.
+                </div>
+            </div>
+        </div>
+
+        <div class="about-content">
+            <h2 class="section-title">O que é Amoracoin?</h2>
+            <p>Amoracoin é uma criptomoeda que permite transações rápidas e seguras entre usuários.</p>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="feature-text">
+                    <strong>Criptomoeda</strong> - Uma moeda fácil e boa.
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-hammer"></i>
+                </div>
+                <div class="feature-text">
+                    <strong>Mineração</strong> - Obtenha Amoracoins através do processo de mineração.
+                </div>
+            </div>
+        </div>
+       
+        <div class="about-content">
+            <h2 class="section-title">Criadores do Banco Amorix</h2>
+            <p>O Amorix foi criado por uma equipe, com o objetivo de criar uma plataforma segura e acessível para o uso da criptomoeda Amoracoin. Nossa missão é democratizar o acesso à tecnologia financeira, permitindo que qualquer pessoa tenha controle sobre seus ativos digitais.</p>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="feature-text">
+                    <strong>Ravy Novais Sales</strong> - Idealizador e principal desenvolvedor do Amorix.
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    <script>
+        function voltarParaOpcoes() {
+            window.location.href = 'opcoes.html';
+        }
+    </script>
+</body>
+</html>
