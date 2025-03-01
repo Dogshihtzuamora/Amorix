@@ -402,72 +402,76 @@
         }
 
         function carregarTransacoes() {
-            if (!enderecoUsuario) return;
+    if (!enderecoUsuario) return;
 
-            showLoading();
-            fetch('https://amoracoin-serve.vercel.app/transfer', { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                hideLoading();
-                const transacoesUsuario = data.filter(transacao =>
-                    transacao.from === enderecoUsuario || transacao.to === enderecoUsuario
-                );
+    showLoading();
+    fetch('https://amoracoin-serve.vercel.app/transfer', { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        const transacoesUsuario = data.filter(transacao =>
+            transacao.from === enderecoUsuario || transacao.to === enderecoUsuario
+        );
 
-                const transacoesDiv = document.getElementById('transacoes');
-                transacoesDiv.innerHTML = '';
+        const transacoesDiv = document.getElementById('transacoes');
+        transacoesDiv.innerHTML = '';
 
-                if (transacoesUsuario.length === 0) {
-                    transacoesDiv.innerHTML = '<div class="sem-transacoes"><i class="fas fa-info-circle"></i> Você ainda não possui transações.</div>';
-                    return;
-                }
-                
-                transacoesUsuario.sort((a, b) => {
-                    
-                    if (a.timestamp && b.timestamp) {
-                        return new Date(b.timestamp) - new Date(a.timestamp);
-                    }
-                    return 0;
-                });
-
-                transacoesUsuario.forEach(transacao => {
-                    const item = document.createElement('div');
-                    item.classList.add('transacao-item');
-                    
-                    let tipoTransacao, classeStatus, classeItem;
-                    
-                    if (transacao.from === enderecoUsuario) {
-                        tipoTransacao = 'Enviado';
-                        classeStatus = 'status-enviado';
-                        classeItem = 'transacao-enviada';
-                    } else {
-                        tipoTransacao = 'Recebido';
-                        classeStatus = 'status-recebido';
-                        classeItem = 'transacao-recebida';
-                    }
-                    
-                    item.classList.add(classeItem);
-
-                    item.innerHTML = `
-                        <div class="quantia">${transacao.amount} <small>AMCR</small></div>
-                        <p><strong>De:</strong> <span class="endereco">${formatarEndereco(transacao.from)}</span></p>
-                        <p><strong>Para:</strong> <span class="endereco">${formatarEndereco(transacao.to)}</span></p>
-                        <span class="status ${classeStatus}">
-                            <i class="fas fa-${tipoTransacao === 'Enviado' ? 'arrow-up' : 'arrow-down'}"></i> 
-                            ${tipoTransacao}
-                        </span>
-                    `;
-                    
-                    transacoesDiv.appendChild(item);
-                });
-            })
-            .catch(error => {
-                hideLoading();
-                console.error('Erro ao carregar transações:', error);
-                document.getElementById('transacoes').innerHTML = 
-                    '<div class="sem-transacoes"><i class="fas fa-exclamation-triangle"></i> Erro ao carregar transações.</div>';
-            });
+        if (transacoesUsuario.length === 0) {
+            transacoesDiv.innerHTML = '<div class="sem-transacoes"><i class="fas fa-info-circle"></i> Você ainda não possui transações.</div>';
+            return;
         }
+        
+        transacoesUsuario.sort((a, b) => {
+            if (a.timestamp && b.timestamp) {
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            }
+            return 0;
+        });
 
+        transacoesUsuario.forEach(transacao => {
+            const item = document.createElement('div');
+            item.classList.add('transacao-item');
+            
+            let tipoTransacao, classeStatus, classeItem;
+            
+            if (transacao.from === enderecoUsuario) {
+                tipoTransacao = 'Enviado';
+                classeStatus = 'status-enviado';
+                classeItem = 'transacao-enviada';
+            } else {
+                tipoTransacao = 'Recebido';
+                classeStatus = 'status-recebido';
+                classeItem = 'transacao-recebida';
+            }
+            
+            item.classList.add(classeItem);
+
+            const dataFormatada = new Date(transacao.timestamp);
+            const dataString = dataFormatada.toLocaleString('pt-BR', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+            });
+
+            item.innerHTML = `
+                <div class="quantia">${transacao.amount} <small>AMCR</small></div>
+                <p><strong>De:</strong> <span class="endereco">${formatarEndereco(transacao.from)}</span></p>
+                <p><strong>Para:</strong> <span class="endereco">${formatarEndereco(transacao.to)}</span></p>
+                <p><strong>Data:</strong> ${dataString}</p>
+                <span class="status ${classeStatus}">
+                    <i class="fas fa-${tipoTransacao === 'Enviado' ? 'arrow-up' : 'arrow-down'}"></i> 
+                    ${tipoTransacao}
+                </span>
+            `;
+            
+            transacoesDiv.appendChild(item);
+        });
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Erro ao carregar transações:', error);
+        document.getElementById('transacoes').innerHTML = 
+            '<div class="sem-transacoes"><i class="fas fa-exclamation-triangle"></i> Erro ao carregar transações.</div>';
+    });
+}
                document.addEventListener('DOMContentLoaded', function() {
             obterEnderecoUsuario();
         });
