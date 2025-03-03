@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congelar e Restaurar - Amoracoin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --light-color: #f5f6fa;
+            --danger-color: #e74c3c;
+            --success-color: #00b894;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5649c0;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none;
+            z-index: 1000;
+        }
+
+        pre {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 100%;
+        }
+
+        .content-box {
+            max-width: 100%;
+            overflow: hidden;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            background-color: #f5f6fa;
+        }
+
+        input[type="file"] {
+            margin: 15px 0;
+        }
+        
+          .back-btn {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <button class="back-btn" onclick="voltarParaCarteira()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        <h1><i class="fas fa-lock"></i> Congelar Carteira Amoracoin</h1>
+        <p class="subtitle">Gerencie o backup e a restauração de sua carteira de forma segura.</p>
+    </header>
+
+    <div class="wallet-actions">
+        <button class="btn-primary" id="congelarBtn" onclick="congelarCarteira()">
+            <i class="fas fa-freeze"></i> Congelar Carteira
+        </button>
+        <button class="btn-danger" id="restaurarBtn" onclick="restaurarCarteira()">
+            <i class="fas fa-undo"></i> Restaurar Backup
+        </button>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <div id="backupSection" class="hidden">
+        <h2>Backup da Carteira</h2>
+        <p>Aqui está o conteúdo criptografado do seu backup. <b>Salve este arquivo</b> em um local seguro para restaurar sua carteira.</p>
+        <div class="content-box">
+            <pre id="backupContent"></pre>
+        </div>
+        <button class="btn-primary" id="downloadBtn" onclick="baixarBackup()">Baixar Backup</button>
+    </div>
+
+    <div id="restoreSection" class="hidden">
+        <h2>Restaurar Backup</h2>
+        <input type="file" id="restoreFile" />
+        <textarea id="restoreText" placeholder="Digite o texto de backup aqui" rows="5" style="width: 100%;"></textarea>
+        <button class="btn-danger" onclick="enviarBackup()">Restaurar</button>
+    </div>
+
+</div>
+
+<script>
+      function voltarParaCarteira() {
+            window.location.href = 'index.html';
+        }
+        
+    function mostrarNotificacao(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000);
+    }
+
+    function congelarCarteira() {
+        const chavePrivada = localStorage.getItem('amoracoin_private_key');
+
+        if (!chavePrivada) {
+            mostrarNotificacao('Você não está logado. Por favor, faça login antes de congelar a carteira.');
+            return;
+        }
+
+        const url = `https://amoracoin-serve.vercel.app/backup?key_private=${chavePrivada}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.encrypted) {
+                    document.getElementById('backupContent').textContent = data.encrypted;
+                    document.getElementById('backupSection').classList.remove('hidden');
+                    document.getElementById('restaurarBtn').classList.add('hidden');
+                    mostrarNotificacao('Backup gerado com sucesso. Salve o arquivo.');
+                } else {
+                    mostrarNotificacao('Erro ao gerar backup.');
+                }
+            })
+            .catch(error => {
+                mostrarNotificacao('Erro ao gerar backup.');
+                console.error('Erro:', error);
+            });
+    }
+
+    function baixarBackup() {
+        const chavePrivada = localStorage.getItem('amoracoin_private_key');
+        const url = `https://amoracoin-serve.vercel.app/backup?key_private=${chavePrivada}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const blob = new Blob([data.encrypted], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'backup_amoracoin.txt';
+                link.click();
+            })
+            .catch(error => {
+                mostrarNotificacao('Erro ao baixar o backup.');
+                console.error('Erro:', error);
+            });
+    }
+
+    function restaurarCarteira() {
+        document.getElementById('restoreSection').classList.remove('hidden');
+        document.getElementById('backupSection').classList.add('hidden');
+    }
+
+ function enviarBackup() {
+    const fileInput = document.getElementById('restoreFile');
+    const file = fileInput.files[0];
+    const textInput = document.getElementById('restoreText').value;
+
+    if (!file && !textInput) {
+        mostrarNotificacao('Por favor, selecione um arquivo ou insira o texto de backup.');
+        return;
+    }
+
+    let backupContent = '';
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            backupContent = event.target.result;
+            enviarParaServidor(backupContent);
+        };
+        reader.readAsText(file);
+    } else if (textInput) {
+        backupContent = textInput;
+        enviarParaServidor(backupContent);
+    }
+    
+   
+    function enviarParaServidor(content) {
+        const url = `https://amoracoin-serve.vercel.app/backup?restore=${content}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === true) {
+                    mostrarNotificacao('Carteira restaurada com sucesso.');
+                } else {
+                    mostrarNotificacao('Erro ao restaurar a carteira.');
+                }
+            })
+            .catch(error => {
+                mostrarNotificacao('Erro ao restaurar a carteira.');
+                console.error('Erro:', error);
+            });
+    }
+}
+</script>
+
+</body>
+</html>
+
+
