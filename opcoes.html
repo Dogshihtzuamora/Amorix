@@ -284,11 +284,23 @@
                     <div class="option-description">Sair da sua conta (seus dados permanecem seguros)</div>
                 </div>
             </div>
+            
+            <div class="option-item option-danger" onclick="congelarCarteira()">
+    <div class="option-icon icon-danger">
+        <i class="fas fa-snowflake"></i>
+    </div>
+    <div class="option-content">
+        <div class="option-title">Congelar Carteira</div>
+        <div class="option-description">
+            O sistema remove sua carteira da rede e gera um conteúdo criptografado. Guarde esse conteúdo para restaurar sua carteira depois.
+        </div>
+    </div>
+</div>
 
             <div class="option-item option-danger" onclick="excluirCarteira()">
                 <div class="option-icon icon-danger">
                     <i class="fas fa-trash-alt"></i>
-                </div>
+                </div>                
                 <div class="option-content">
                     <div class="option-title">Excluir Carteira</div>
                     <div class="option-description">Atenção: Esta ação não pode ser desfeita!</div>
@@ -423,6 +435,17 @@
                 }
             }
         };
+        
+        function congelarCarteira() {
+    if (!chavePrivada) {
+        showNotification('Erro: Chave privada não encontrada.');
+        return;
+    }
+
+    showLoading();
+
+    window.location.href = 'congelar.html';
+}
         
         function irParaSobre() {
     window.location.href = 'sobre.html';
